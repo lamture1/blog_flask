@@ -1,9 +1,21 @@
 import sqlite3
 from flask import Flask,request,g,jsonify
 from datetime import datetime
+from flask_basicauth import BasicAuth
+
+
+class Authentication(BasicAuth):
+    def check_credentials(self,username, password):
+        cursor = get_db().cursor().execute("SELECT USER_ID,PASSWORD FROM AUTHORS WHERE USER_ID =?",(username,))
+        data = cursor.fetchall()
+        if data[0][0] == username and data[0][1] == password:
+            return True
+        return False
+
 app = Flask(__name__)
 
 DATABASE = 'blogdb.db'
+basic_auth = Authentication(app)
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -19,6 +31,7 @@ def close_connection(exception):
         db.close()
 
 @app.route('/User',methods=['POST'])
+@basic_auth.required
 def adduser():
     success:bool = False
     cur = get_db().cursor()
@@ -88,4 +101,4 @@ def updateuser():
             return jsonify(message="failed to update data"), 409
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
