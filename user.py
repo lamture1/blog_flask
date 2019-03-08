@@ -33,13 +33,16 @@ def close_connection(exception):
 @app.route('/User',methods=['POST'])
 @basic_auth.required
 def adduser():
+    print("In add user")
     success:bool = False
     cur = get_db().cursor()
     try:
-        uid = request.form['uid']
-        pwd = request.form['pwd']
-        fname = request.form['fname']
-        lname = request.form['lname']
+        req_data = request.get_json()
+        uid = req_data['uid']
+        pwd = req_data['pwd']
+        fname = req_data['fname']
+        lname = req_data['lname']
+        print(uid)
         cur.execute("INSERT INTO AUTHORS(USER_ID, PASSWORD, FNAME, LNAME, DATE) VALUES (?, ?, ?, ?, ?)",(uid,pwd,fname,lname,datetime.now()))
         get_db().commit()
         success = True

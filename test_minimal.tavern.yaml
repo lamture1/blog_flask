@@ -1,0 +1,10 @@
+test_name : Get Some Fake Data
+stages :
+  name: Make sure you create a USER_ID
+  request:
+    url: http://localhost:5000/User
+    method: POST
+    body:
+      
+  response:
+    status_code : 200
