@@ -1,10 +1,23 @@
-test_name : Get Some Fake Data
-stages :
-  name: Make sure you create a USER_ID
-  request:
-    url: http://localhost:5000/User
-    method: POST
-    body:
-      
-  response:
-    status_code : 200
+---
+
+test_name: Make sure user module works perfect with database
+
+includes:
+
+stages:
+  - name: Make sure you can add user
+    request:
+      url: http://localhost:5000/User
+      auth:
+        - jainam
+        - qwert
+      json:
+        uid: jainam345
+        pwd: 1234
+        fname: Jainam
+        lname: Mehta
+      method: POST
+      headers:
+        content-type: application/json
+    response:
+      status_code: 201
