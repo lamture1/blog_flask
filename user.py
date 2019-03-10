@@ -31,7 +31,6 @@ def close_connection(exception):
         db.close()
 
 @app.route('/User',methods=['POST'])
-@basic_auth.required
 def adduser():
     print("In add user")
     success:bool = False
@@ -56,18 +55,16 @@ def adduser():
             return jsonify(message="Fail"), 409
 
 @app.route('/User',methods=['DELETE'])
+@basic_auth.required
 def deleteuser():
     success:bool = False
     cur = get_db().cursor()
     try:
-        uid = request.form['uid']
-        pwd = request.form['pwd']
-        cur.execute("SELECT PASSWORD FROM AUTHORS WHERE USER_ID =?",(uid,))
-        passwords = cur.fetchall()
-        if passwords[0][0] == pwd:
-            cur.execute("DELETE FROM AUTHORS WHERE USER_ID= ?",(uid,))
-            cur.execute("UPDATE COMMENTS SET USER_ID='ANONYMOUS COWARD' WHERE USER_ID=?",(uid,))
-            success = True
+        uid = request.authorization["username"]
+        pwd = request.authorization["password"]
+        cur.execute("DELETE FROM AUTHORS WHERE USER_ID= ?",(uid,))
+        cur.execute("UPDATE COMMENTS SET USER_ID='ANONYMOUS COWARD' WHERE USER_ID=?",(uid,))
+        success = True
         get_db().commit()
     except:
         get_db().rollback()
@@ -79,20 +76,18 @@ def deleteuser():
             return jsonify(message="failed to delete data"), 409
 
 @app.route('/User',methods=['PATCH'])
+@basic_auth.required
 def updateuser():
     success:bool = False
     cur = get_db().cursor()
+    req_data = request.get_json()
     try:
-        uid = request.form['uid']
-        opwd = request.form['opwd']
-        npwd = request.form['npwd']
-        cur.execute("SELECT PASSWORD FROM AUTHORS WHERE USER_ID = ?",(uid,))
-        passwords = cur.fetchall()
-        print(passwords)
-        if passwords[0][0] == opwd:
-            cur.execute("UPDATE AUTHORS SET PASSWORD=? WHERE USER_ID=?",(npwd,uid,))
-            print("HURRAY")
-            success = True
+        uid = request.authorization["username"]
+        opwd = request.authorization["password"]
+        npwd = req_data['npwd']
+        cur.execute("UPDATE AUTHORS SET PASSWORD=? WHERE USER_ID=?",(npwd,uid,))
+        print("HURRAY")
+        success = True
         get_db().commit()
     except:
         get_db().rollback()
