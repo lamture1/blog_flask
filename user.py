@@ -8,8 +8,9 @@ class Authentication(BasicAuth):
     def check_credentials(self,username, password):
         cursor = get_db().cursor().execute("SELECT USER_ID,PASSWORD FROM AUTHORS WHERE USER_ID =?",(username,))
         data = cursor.fetchall()
-        if data[0][0] == username and data[0][1] == password:
-            return True
+        if len(data) > 0:
+            if data[0][0] == username and data[0][1] == password:
+                return True
         return False
 
 app = Flask(__name__)
