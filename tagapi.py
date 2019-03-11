@@ -33,6 +33,7 @@ def close_connection(exception):
         db.close()
 
 # @app.route('/Tag',methods=['POST'])
+# @basic_auth.required
 # def addtag():
 #     success:bool=False
 #     cur=get_db().cursor()
@@ -47,9 +48,9 @@ def close_connection(exception):
 #         success=False
 #     finally:
 #         if success:
-#             return str(200)
+#             return jsonify(message="Passed"), 201
 #         else:
-#             return str(500)
+#             return jsonify(message="Fail"), 409
 
 @app.route('/Tag',methods=['POST'])
 @basic_auth.required
