@@ -112,39 +112,18 @@ def getarticle():
         else:
             return jsonify(message="failed to delete data"), 409
 
-@app.route('/Tag',methods=['GET'])
-def gettag():
-    success:bool=False
-    cur=get_db().cursor()
-    try:
-        req_data=request.get_json()
-        artid=req_data['artid']
-        cur.execute("SELECT * FROM TAGS WHERE TAG_ID IN (SELECT TAG_ID FROM ARTICLE_TAG WHERE ARTICLE_ID=?)",(artid,))
-        rec=cur.fetchall()
-        print(rec)
-        s=jsonify(rec)
-        print(s)
-        get_db().commit()
-        success=True
-    except:
-        get_db().rollback()
-        success=False
-    finally:
-        if success:
-            return s, 200
-        else:
-            return jsonify(message="failed to fetch data"), 409
-
 # @app.route('/Tag',methods=['GET'])
-# def getart():
+# def gettag():
 #     success:bool=False
 #     cur=get_db().cursor()
 #     try:
 #         req_data=request.get_json()
-#         tag=req_data['tag']
-#         cur.execute("SELECT ARTICLE_ID FROM ARTICLE_TAG WHERE TAG_ID IN (SELECT TAG_ID FROM TAGS WHERE TAG_NAME=?)",(tag,))
+#         artid=req_data['artid']
+#         cur.execute("SELECT * FROM TAGS WHERE TAG_ID IN (SELECT TAG_ID FROM ARTICLE_TAG WHERE ARTICLE_ID=?)",(artid,))
 #         rec=cur.fetchall()
 #         print(rec)
+#         s=jsonify(rec)
+#         print(s)
 #         get_db().commit()
 #         success=True
 #     except:
@@ -152,9 +131,32 @@ def gettag():
 #         success=False
 #     finally:
 #         if success:
-#             return str(200)
+#             return s, 200
 #         else:
-#             return str(500)
+#             return jsonify(message="failed to fetch data"), 409
+
+# @app.route('/Tag',methods=['GET'])
+# def getart():
+#     success:bool=False
+#     cur=get_db().cursor()
+#     s = ""
+#     try:
+#         req_data=request.get_json()
+#         tag=req_data['tag']
+#         print(tag)
+#         cur.execute("SELECT ARTICLE_ID FROM ARTICLE_TAG WHERE TAG_ID IN (SELECT TAG_ID FROM TAGS WHERE TAG_NAME=?)",(tag,))
+#         rec=cur.fetchall()
+#         s = jsonify(rec)
+#         get_db().commit()
+#         success=True
+#     except:
+#         get_db().rollback()
+#         success=False
+#     finally:
+#         if success:
+#             return s, 200
+#         else:
+#             return jsonify(message="failed to fetch data"), 409
 
 
 if __name__=="__main__":
